@@ -1,15 +1,23 @@
-import React, {ChangeEvent, FC} from 'react';
+import React, {
+   ChangeEvent,
+   Component,
+   DetailedHTMLProps,
+   FC,
+   FunctionComponent,
+   HTMLAttributes,
+   InputHTMLAttributes
+} from 'react';
 import styled from "styled-components";
 import {Theme} from "./Theme";
 
 type InputWindowPropsType = {
    title: string
-   valueMinMax: number
+   valueMinOrMax: number
    setValue: (value: number) => void
    error: boolean
 }
-export const InputWindow: FC<InputWindowPropsType> = ({title, valueMinMax, setValue, error}) => {
-
+export const InputWindow: FC<InputWindowPropsType> = ({title, valueMinOrMax, setValue, error}) => {
+   console.log('error', error)
    const onChange = (e: ChangeEvent<HTMLInputElement>) => {
       if (Number(e.currentTarget.value) >= 0 )
          setValue(Number(e.currentTarget.value))
@@ -18,7 +26,7 @@ export const InputWindow: FC<InputWindowPropsType> = ({title, valueMinMax, setVa
    return (
       <StyledInput error={error}>
          <label htmlFor={title}>{title}</label>
-         <input type={"number"} value={valueMinMax} onChange={onChange} id={title}/>
+         <input type={"number"} value={valueMinOrMax} onChange={onChange} id={title}/>
       </StyledInput>
    );
 };
@@ -48,4 +56,3 @@ const StyledInput = styled.div<{error: boolean}>`
     
   }
 `
-

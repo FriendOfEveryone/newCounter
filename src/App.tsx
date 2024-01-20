@@ -1,27 +1,34 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useReducer, useState} from 'react';
 import './App.css';
 import {Settings} from "./components/Settings";
 import {Counter} from "./components/Counter";
 import styled from "styled-components";
+import {counterReducer, counterState, SetCurrentValueAC, SetMaxAC, SetMinAC} from "./state/counter-reducer";
+import {useDispatch, useSelector} from "react-redux";
+import {AppRootStateType} from "./state/store";
+
+export type CounterStateType = {
+   currentCount: number
+   min: number
+   max: number
+}
 
 function App() {
 
-   const [count, setCount] = useState(0);
-   const [max, setMax] = useState(1);
-   const [min, setMin] = useState(0);
-   const [error, setError] = useState(false);
+   const valuesCounter = useSelector<AppRootStateType, CounterStateType>((state => state.valuesCounter));
+   const dispatch = useDispatch()
    const [correcting, setCorrecting] = useState(false)
 
    const setMaxHandler = (value: number) => {
       setCorrecting(true);
-      if (value >= min) {
-         setMax(value)
+      if (value >= valuesCounter.min) {
+         dispatch(SetMaxAC(value))
       }
    }
    const setMinHandler = (value: number) => {
       setCorrecting(true);
-      if (value <= max) {
-         setMin(value)
+      if (value <= valuesCounter.max) {
+         dispatch(SetMinAC(value))
       }
    }
 
@@ -30,35 +37,37 @@ function App() {
       const maxValue = localStorage.getItem("maxValue");
       const minValue = localStorage.getItem("minValue");
       if (currentValue) {
-         setCount(JSON.parse(currentValue));
+         dispatch(SetCurrentValueAC(JSON.parse(currentValue)))
       }
       if (maxValue) {
-         setMax(JSON.parse(maxValue));
+         dispatch(SetMaxAC(JSON.parse(maxValue)))
       }
       if (minValue) {
-         setMin(JSON.parse(minValue));
+         dispatch(SetMinAC(JSON.parse(minValue)))
       }
    }, []);
 
    useEffect(() => {
-      localStorage.setItem("counterValueKey", JSON.stringify(count))
-   }, [count]);
+      localStorage.setItem("counterValueKey", JSON.stringify(valuesCounter.currentCount))
+   }, [counterState.currentCount]);
 
    const setLocal = () => {
       setCorrecting(false);
-      localStorage.setItem("maxValue", JSON.stringify(max));
-      localStorage.setItem("minValue", JSON.stringify(min));
-      setCount(min);
+      localStorage.setItem("maxValue", JSON.stringify(valuesCounter.max));
+      localStorage.setItem("minValue", JSON.stringify(valuesCounter.min));
+      dispatch(SetCurrentValueAC(valuesCounter.min));
    }
 
    return (
       <>
          <Main>
-            <Settings max={max} setMax={setMaxHandler}
-                      min={min} setMin={setMinHandler}
+            <Settings max={valuesCounter.max}
+                      setMax={setMaxHandler}
+                      min={valuesCounter.min}
+                      setMin={setMinHandler}
                       setLocal={setLocal}
             />
-            <Counter correcting={correcting} count={count} callback={setCount} max={max} min={min} error={error}/>
+            <Counter correcting={correcting} count={valuesCounter.currentCount} dispatch={dispatch} max={valuesCounter.max} min={valuesCounter.min}/>
          </Main>
       </>
    );

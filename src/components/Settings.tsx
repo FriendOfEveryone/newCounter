@@ -2,7 +2,7 @@ import React, {FC} from 'react';
 import {SuperButton} from "./SuperButton";
 import {Container} from "./Container";
 import {Window} from "./Window";
-import {ForButtons} from "./ForButtons";
+import {ForButtonsContainer} from "./ForButtons";
 import {InputWindow} from "./InputWindow";
 
 type SettingsPropsType = {
@@ -16,20 +16,22 @@ type SettingsPropsType = {
 export const Settings: FC<SettingsPropsType> = ({max, setMax, min, setMin, setLocal}) => {
 
    const onClickSetBtnHandler = () => {
-         setLocal(max, min);
+      setLocal(max, min);
    }
-      const isNotCorrect = (max: number, min: number) => max === min
+
+   const isNotCorrect = max === min
+
    return (
       <Container>
          <Window>
-            <InputWindow error = {isNotCorrect(max, min)} title={"Max value:"} valueMinMax={max} setValue={setMax}/>
-            <InputWindow error = {isNotCorrect(max, min)} title={"Start value:"} valueMinMax={min} setValue={setMin}/>
+            <InputWindow error={isNotCorrect} title="Max value:" valueMinOrMax={max} setValue={setMax}/>
+            <InputWindow error={isNotCorrect} title="Start value:" valueMinOrMax={min} setValue={setMin}/>
          </Window>
-         <ForButtons>
-            <SuperButton onClick={onClickSetBtnHandler} disabled={isNotCorrect(max, min)}>
+         <ForButtonsContainer>
+            <SuperButton onClick={onClickSetBtnHandler} disabled={isNotCorrect}>
                set
             </SuperButton>
-         </ForButtons>
+         </ForButtonsContainer>
       </Container>
    );
 };
