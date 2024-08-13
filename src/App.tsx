@@ -79,7 +79,7 @@ const Main = styled.div`
   display: flex;
   justify-content: space-around;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 
   padding: 20px;
 
